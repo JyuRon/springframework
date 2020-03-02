@@ -1,4 +1,4 @@
-package com.lol.clan;
+package com.lol.clan.controller;
 
 import java.text.DateFormat;
 import java.util.Date;
