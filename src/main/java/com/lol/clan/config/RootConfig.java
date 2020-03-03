@@ -31,7 +31,7 @@ public class RootConfig {
 		
 		//log4j 설정
 		hikariConfig.setDriverClassName("net.sf.log4jdbc.sql.jdbcapi.DriverSpy");
-		hikariConfig.setJdbcUrl("jdbc:log4jdbc:oracle:thin:@localhost:1521:orcl");
+		hikariConfig.setJdbcUrl("jdbc:log4jdbc:oracle:thin:@192.168.111.100:1521:xe");
 		
 		
 		hikariConfig.setUsername("dodam");
