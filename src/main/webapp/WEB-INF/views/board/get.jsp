@@ -60,6 +60,10 @@
 					<!-- 수정, 리스트 이동을 위한 form -->
 					<form id='openForm' action="/board/modify" method="get">
 						<input type='hidden' id='bno' name='bno' value='<c:out value="${board.bno }"/>'>
+						
+						<!-- 리스트, modify 로 이동시 기존 페이지 번호 유지 -->
+						<input type='hidden' name='pageNum' value='<c:out value="${cri.pageNum }"/>'>
+						<input type='hidden' name='amount' value='<c:out value="${cri.amount }"/>'>
 					</form>
 					
 					
@@ -74,6 +78,10 @@
 	<!-- end panel -->
 </div>
 <!-- /.row -->
+
+
+
+
 
 <script type="text/javascript">
 

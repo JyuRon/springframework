@@ -3,6 +3,7 @@ package com.lol.clan.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -42,7 +43,16 @@ public class BoardController {
 		log.info("list: "+cri);
 		
 		model.addAttribute("list",service.getList(cri));
-		model.addAttribute("pageMaker",new PageDTO(cri,123));
+		//model.addAttribute("pageMaker",new PageDTO(cri,123));
+		
+		
+		//게시물 개수 검색
+		//cri를 전달할 피요는 없긴 하지만 목록과 전체 데이터 개수는 항상 같이 동작하는 경우가 많기 때문에 추가
+		int total = service.getTotal(cri);
+		
+		log.info("total: "+total);
+		
+		model.addAttribute("pageMaker",new PageDTO(cri,total));
 	}
 	
 	
@@ -69,8 +79,10 @@ public class BoardController {
 	
 	
 	
+	
+	//@ModelAttribute : controller에서 화면으로 객체는 전달이 되지만 좀더 명시적으로 이름을 지정하기 위함
 	@GetMapping({"/get","/modify"})
-	public void get(@RequestParam("bno") Long bno, Model model) {
+	public void get(@RequestParam("bno") Long bno, @ModelAttribute("cri") Criteria cri ,Model model) {
 		
 		log.info("/get or modify");
 		model.addAttribute("board",service.get(bno));
@@ -78,8 +90,9 @@ public class BoardController {
 	
 	
 	
+	//@ModelAttribute : controller에서 화면으로 객체는 전달이 되지만 좀더 명시적으로 이름을 지정하기 위함
 	@PostMapping("/modify")
-	public String modify(BoardVO board, RedirectAttributes rttr) {
+	public String modify(BoardVO board, @ModelAttribute("cri") Criteria cri, RedirectAttributes rttr) {
 		
 		log.info("modify: "+ board);
 		
@@ -88,20 +101,30 @@ public class BoardController {
 			rttr.addFlashAttribute("result","success");
 		}
 		
+		//v페이징 번호를 유지
+		rttr.addAttribute("pageNum",cri.getPageNum());
+		rttr.addAttribute("amount",cri.getAmount());
+		
 		return "redirect:/board/list";
 	}
 	
 	
 	
 	
-	
+
+	//@ModelAttribute : controller에서 화면으로 객체는 전달이 되지만 좀더 명시적으로 이름을 지정하기 위함
 	@PostMapping("/remove")
-	public String remove(@RequestParam("bno") Long bno, RedirectAttributes rttr) {
+	public String remove(@RequestParam("bno") Long bno, @ModelAttribute("cri") Criteria cri, RedirectAttributes rttr) {
 		
 		log.info("remove..." + bno);
 		if(service.remove(bno)) {
 			rttr.addFlashAttribute("result","success");
 		}
+		
+		
+		//페이징 번호를 유지
+		rttr.addAttribute("pageNum",cri.getPageNum());
+		rttr.addAttribute("amount",cri.getAmount());
 		
 		return "redirect:/board/list";
 	}

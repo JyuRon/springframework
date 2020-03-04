@@ -71,6 +71,10 @@
 					<button type="submit" data-oper='list' class="btn btn-info" onclick="location.href='/board/list'">List</button>
 					
 					
+					<!-- 리스트, modify 로 이동시 기존 페이지 번호 유지 -->
+						<input type='hidden' name='pageNum' value='<c:out value="${cri.pageNum }"/>'>
+						<input type='hidden' name='amount' value='<c:out value="${cri.amount }"/>'>
+					
 				</form>
 			
 			</div>
@@ -113,8 +117,18 @@ $(document).ready(function(){
 			
 			
 			formObj.attr("action","/board/list").attr("method","get");
-			//리스트 이동시 파라미터는 필요 없기 때문...
+			
+			//게시물 수정 후 수정 내용을 확인하기 위한 작업과 페이지 번호를 유지하기 위한 방안
+			var pageNumTag = $("input[name='pageNum']").clone;
+			var amountTab = $("input[name='amount']").clone;
+			
+			
+			//파라미터값 삭제
 			formObj.empty();
+			
+			//복사한 파라미터 적용
+			formObj.append(pageNumTag);
+			formObj.append(amountTag);
 		}
 		
 		//최종적으로 submit 수행

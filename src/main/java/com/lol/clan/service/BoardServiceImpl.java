@@ -77,5 +77,17 @@ public class BoardServiceImpl implements BoardService {
 		return mapper.getListWithPaging(cri);
 	}
 
+	
+	
+	//게시물 개수 검색
+	//cri를 전달할 피요는 없긴 하지만 목록과 전체 데이터 개수는 항상 같이 동작하는 경우가 많기 때문에 추가
+	@Override
+	public int getTotal(Criteria cri) {
+		// TODO Auto-generated method stub
+		
+		log.info("get total count");
+		return mapper.getTotalCount(cri);
+	}
+
 
 }
