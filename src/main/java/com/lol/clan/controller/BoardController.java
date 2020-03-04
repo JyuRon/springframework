@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.lol.clan.domain.BoardVO;
+import com.lol.clan.domain.Criteria;
 import com.lol.clan.service.BoardService;
 
 import lombok.AllArgsConstructor;
@@ -22,7 +23,9 @@ public class BoardController {
 	
 	private BoardService service;
 	
-	
+	/* 
+	 * 페이징 처릴 위한 주석
+	 * 
 	@GetMapping("/list")
 	public void list(Model model) {
 		
@@ -30,6 +33,16 @@ public class BoardController {
 		
 		model.addAttribute("list",service.getList());
 	}
+	*/
+	
+	@GetMapping("/list")
+	public void list(Criteria cri, Model model) {
+		
+		log.info("list: "+cri);
+		
+		model.addAttribute("list",service.getList(cri));
+	}
+	
 	
 	
 	

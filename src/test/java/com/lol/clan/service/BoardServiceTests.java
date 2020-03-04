@@ -10,6 +10,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.lol.clan.config.RootConfig;
 import com.lol.clan.domain.BoardVO;
+import com.lol.clan.domain.Criteria;
 
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
@@ -47,14 +48,8 @@ public class BoardServiceTests {
 	}
 	
 	
-	
-	@Test
-	public void testGetList() {
-		
-		service.getList().forEach(board->log.info(board));
-	}
-	
-	
+
+
 	
 	
 	@Test
@@ -88,10 +83,15 @@ public class BoardServiceTests {
 	}
 
 	
-	
-	
-	
-	
+
+	@Test
+	public void testGetList() {
+		
+		//페이징 처리를 위한 주석
+		//service.getList().forEach(board->log.info(board));
+		
+		service.getList(new Criteria(2,10)).forEach(board ->log.info(board));
+	}
 	
 	
 

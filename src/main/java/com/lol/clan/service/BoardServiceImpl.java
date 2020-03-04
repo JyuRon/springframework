@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.lol.clan.domain.BoardVO;
+import com.lol.clan.domain.Criteria;
 import com.lol.clan.mapper.BoardMapper;
 
 import lombok.AllArgsConstructor;
@@ -56,6 +57,8 @@ public class BoardServiceImpl implements BoardService {
 		return mapper.delete(bno)==1;
 	}
 
+	
+	/* 페이징 처리로 인한 주석
 	@Override
 	public List<BoardVO> getList() {
 		// TODO Auto-generated method stub
@@ -63,5 +66,16 @@ public class BoardServiceImpl implements BoardService {
 		log.info("getList............");
 		return mapper.getList();
 	}
+	*/
+	
+	
+	@Override
+	public List<BoardVO> getList(Criteria cri) {
+		// TODO Auto-generated method stub
+		
+		log.info("get List with criteria: "+cri);
+		return mapper.getListWithPaging(cri);
+	}
+
 
 }
