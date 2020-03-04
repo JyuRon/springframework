@@ -10,6 +10,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.lol.clan.domain.BoardVO;
 import com.lol.clan.domain.Criteria;
+import com.lol.clan.domain.PageDTO;
 import com.lol.clan.service.BoardService;
 
 import lombok.AllArgsConstructor;
@@ -41,6 +42,7 @@ public class BoardController {
 		log.info("list: "+cri);
 		
 		model.addAttribute("list",service.getList(cri));
+		model.addAttribute("pageMaker",new PageDTO(cri,123));
 	}
 	
 	
