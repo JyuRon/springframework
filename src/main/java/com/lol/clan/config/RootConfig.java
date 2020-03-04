@@ -15,7 +15,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
-@ComponentScan(basePackages= {"com.lol.clan.sample"})
+@ComponentScan(basePackages= {"com.lol.clan.service"})
 @MapperScan(basePackages= {"com.lol.clan.mapper"})
 public class RootConfig {
 	
