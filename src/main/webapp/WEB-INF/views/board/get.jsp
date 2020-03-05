@@ -3,7 +3,7 @@
     
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-    
+ 
 <%@ include file="../includes/header.jsp" %>
 
 
@@ -81,10 +81,233 @@
 </div>
 <!-- /.row -->
 
+<!-- 댓글창 -->
+
+<div class='row'>
+	<div class='col-lg-12'>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<i class="fa fa-comments fa-fw"></i>Reply
+				<button id='addReplyBtn' class='btn btn-primary btn-xs pull-right'>New Reply</button>
+			</div>
+			
+			<div class="panel-body">
+				<ul class="chat">
+					<!-- start reply -->
+					<li class="left clearfix" data-rno='12'>
+						<div>
+							<div class="header">
+								<strong class="primary-font">user00</strong>
+								<small class="pull-right text-muted">2018-01-01 13:13</small>
+							</div>
+							<p>Good job!</p>
+						</div>
+					</li>
+					<!-- end reply -->
+				</ul>
+				
+				<!-- ./end ul -->
+			</div>
+			<!-- /.panel .chat-panel -->
+		</div>
+	</div>
+
+</div>
+
+<!-- 댓글 창  -->
+
+
+<!-- 댓글 등록창(모달) -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			
+			
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&items;</button>
+				<h4 class="modal-title" id="myModalLabel">REPLY MODAL</h4>
+			</div>
+			
+			
+			<div class="modal-body">
+				<div class="form-group">
+					<label>Reply</label>
+					<input class="form-control" name='reply' value='New Reply!!!'>
+				</div>
+				<div class="form-group">
+					<label>Replyer</label>
+					<input class="form-control" name='replyer' value='replyer'>
+				</div>
+				<div class="form-group">
+					<label>Reply Date</label>
+					<input class="form-control" name='replyDate' value=''>
+				</div>
+			</div>
+			
+			
+			
+			<div class="modal-footer">
+				<button id='modalModBtn' type="button" class="btn btn-warning">Modify</button>
+				<button id='modalRemoveBtn' type="button" class="btn btn-danger">Remove</button>
+				<button id='modalRegisterBtn' type="button" class="btn btn-primary">Register</button>
+				<button id='modalCloseBtn' type="button" class="btn btn-default">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+<script type="text/javascript" src="/resources/js/reply.js"></script> 
+
+<script>
+//댓글 리스트 가져오기
+
+$(document).ready(function(){
+
+	var bnoValue = '<c:out value="${board.bno}"/>';
+	var replyUL = $(".chat");
+	
+	showList(1);
+	
+	function showList(page){
+		
+		replyService.getList(
+				
+			{bno:bnoValue, page: page|| 1}
+			, 
+			function(list){
+			
+				var str="";
+				
+				if(list == null || list.length == 0){
+					replyUL.html("");
+					return;
+				}
+				
+				for(var i = 0, len = list.length || 0; i < len; i++){
+					
+					str +="<li class='left clearfix' data-rno='"+list[i].rno+"'>";
+					str +="<div><div class='header'><strong class='primary-font'>"+list[i].replyer+"</strong>";
+					str +="<small class='pull-right text-muted'>"+replyService.displayTime(list[i].replyDate)+"</small></div>";
+					str +="<p>"+list[i].reply+"</p></div></li>";
+				}
+				
+				replyUL.html(str);
+			});
+		
+	}//end showList
+	
+	
+	//modal창 관련 스크립트
+	var modal = $(".modal");
+	var modalInputReply = modal.find("input[name='reply']");
+	var modalInputReplyer = modal.find("input[name='replyer']");
+	var modalInputReplyDate = modal.find("input[name='replyDate']");
+	
+	var modalModBtn = $("#modalModBtn");
+	var modalRemoveBtn = $("#modalRemoveBtn");
+	var modalRegisterBtn = $("#modalRegisterBtn");
+	
+	
+	//모달창에 상황에 따라 표현할 버튼 - 등록시
+	$("#addReplyBtn").on("click", function(e){
+		
+		modal.find("input").val("");
+		modalInputReplyDate.closest("div").hide();
+		modal.find("button[id !='modalCloseBtn']").hide();
+		
+		modalRegisterBtn.show();
+		
+		$(".modal").modal("show");
+		
+	});
+	
+	
+	//댓글 조회 이벤트
+	$(".chat").on("click","li",function(e){
+		
+		var rno = $(this).data("rno");
+		
+		replyService.get(rno, function(reply){
+			
+			modalInputReply.val(reply.reply);
+			modalInputReplyer.val(reply.replyer);
+			modalInputReplyDate.val(replyService.displayTime(reply.replyDate)).attr("readonly","readonly");
+			modal.data("rno",reply.rno);
+			
+			modal.find("button[id !='modalCloseBtn']").hide();
+			modalModBtn.show();
+			modalRemoveBtn.show();
+			
+			$(".modal").modal("show");
+		});
+	});
+	
+	
+	//등록버튼(기능) 구현
+	modalRegisterBtn.on("click",function(e){
+		
+		var reply = {
+				reply:modalInputReply.val(),
+				replyer:modalInputReplyer.val(),
+				bno:bnoValue
+		};
+		
+		replyService.add(reply, function(result){
+			
+			alert(result);
+			
+			modal.find("input").val("");
+			modal.modal("hide");
+			
+			//글 등록후 갱신을 위한 목적
+			showList(1);
+		});
+	});
+	
+	
+	//수정버튼 기능 구현
+	modalModBtn.on("click",function(e){
+		
+		var reply ={
+				
+				rno:modal.data("rno"),
+				reply:modalInputReply.val()
+		};
+		
+		replyService.update(reply,function(result){
+			
+			alert(result);
+			modal.modal("hide");
+			showList(1);
+		});
+	});
+	
+	
+	//삭제버튼 기능 구현
+	modalRemoveBtn.on("click",function(e){
+		
+		var rno = modal.data("rno");
+		
+		replyService.remove(rno, function(result){
+			
+			alert(result);
+			modal.modal("hide");
+			showList(1);
+		});
+	});
+	
+	
+	
+});
+
+</script>
 
 
 
 
+<!-- 게시글 관련 script -->
 <script type="text/javascript">
 
 

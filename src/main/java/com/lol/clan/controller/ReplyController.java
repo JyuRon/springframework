@@ -50,7 +50,7 @@ public class ReplyController {
 	
 	
 	//@PathVariable : 경로의 일부를 파라미터로 사용
-	@GetMapping(value = "/page/{bno}/{page}",produces= {MediaType.APPLICATION_JSON_UTF8_VALUE, MediaType.APPLICATION_XML_VALUE})
+	@GetMapping(value = "/pages/{bno}/{page}",produces= {MediaType.APPLICATION_JSON_UTF8_VALUE, MediaType.APPLICATION_XML_VALUE})
 	public ResponseEntity<List<ReplyVO>> getList(@PathVariable("page") int page, @PathVariable("bno") Long bno ){
 		
 		log.info("getList.................");

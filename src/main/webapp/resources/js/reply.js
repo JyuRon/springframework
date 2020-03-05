@@ -1,8 +1,7 @@
 console.log("Reply Module.....");
 
-
-var replyService= (function(){
-
+var replyService = (function(){
+	
 	function add(reply, callback, error){
 		console.log("add reply............");
 		
@@ -27,6 +26,7 @@ var replyService= (function(){
 	}
 	
 	
+	
 	function getList(param, callback, error){
 		
 		var bno = param.bno;
@@ -35,8 +35,8 @@ var replyService= (function(){
 		$.getJSON("/replies/pages/" + bno+"/"+page+".json",
 			function(data){
 				if(callback){
-					//callback(data); //댓글 목록만 가져오는 경우
-					callback(data.replyCnt, data.list);
+					callback(data); //댓글 목록만 가져오는 경우
+					//callback(data.replyCnt, data.list);
 				}
 			
 		}).fail(function(xhr,status,err){
@@ -48,12 +48,10 @@ var replyService= (function(){
 	}
 	
 	
-	function remove(rno, replyer, callback, error){
+	function remove(rno, callback, error){
 		$.ajax({
 			type : 'delete',
 			url : '/replies/'+rno,
-			data: JSON.stringify({rno:rno,replyer:replyer}),
-			contentType:"application/json; charset=utf-8",
 			success : function(deleteResult, status, xhr){
 				if(callback){
 					callback(deleteResult);
@@ -110,6 +108,7 @@ var replyService= (function(){
 	}
 	
 	
+	
 	function displayTime(timeValue){
 		
 		var today = new Date();
@@ -135,17 +134,14 @@ var replyService= (function(){
 			return [yy, '/', (mm > 9 ? '' : '0') +mm, '/', (dd > 9 ? '' : '0') +dd].join('');
 		}
 	}
-	;
 	
+	return {add:add,
+			getList : getList,
+			remove:remove,
+			update:update,
+			get:get,
+			displayTime,displayTime
+		};//{속성(변수):함수}
 	
-	
-	
-	return {
-		add:add,
-		getList:getList,
-		remove:remove,
-		update:update,
-		get:get,
-		displayTime:displayTime
-	};
 })();
+
