@@ -64,6 +64,8 @@
 						<!-- 리스트, modify 로 이동시 기존 페이지 번호 유지 -->
 						<input type='hidden' name='pageNum' value='<c:out value="${cri.pageNum }"/>'>
 						<input type='hidden' name='amount' value='<c:out value="${cri.amount }"/>'>
+						<input type='hidden' name='keyword' value= '<c:out value="${cri.keyword }"/>'>
+                        <input type='hidden' name='type' value= '<c:out value="${cri.type }"/>'>
 					</form>
 					
 					

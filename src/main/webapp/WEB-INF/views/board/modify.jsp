@@ -74,6 +74,8 @@
 					<!-- 리스트, modify 로 이동시 기존 페이지 번호 유지 -->
 						<input type='hidden' name='pageNum' value='<c:out value="${cri.pageNum }"/>'>
 						<input type='hidden' name='amount' value='<c:out value="${cri.amount }"/>'>
+						<input type='hidden' name='keyword' value= '<c:out value="${cri.keyword }"/>'>
+                        <input type='hidden' name='type' value= '<c:out value="${cri.type }"/>'>
 					
 				</form>
 			
@@ -119,8 +121,10 @@ $(document).ready(function(){
 			formObj.attr("action","/board/list").attr("method","get");
 			
 			//게시물 수정 후 수정 내용을 확인하기 위한 작업과 페이지 번호를 유지하기 위한 방안
-			var pageNumTag = $("input[name='pageNum']").clone;
-			var amountTab = $("input[name='amount']").clone;
+			 var pageNumTag = $("input[name='pageNum']").clone();
+	      	var amountTag = $("input[name='amount']").clone();
+	      	var keywordTag = $("input[name='keyword']").clone();
+	      	var typeTag = $("input[name='type']").clone();      
 			
 			
 			//파라미터값 삭제
@@ -129,6 +133,8 @@ $(document).ready(function(){
 			//복사한 파라미터 적용
 			formObj.append(pageNumTag);
 			formObj.append(amountTag);
+			formObj.append(typeTag);
+			formObj.append(keywordTag);
 		}
 		
 		//최종적으로 submit 수행

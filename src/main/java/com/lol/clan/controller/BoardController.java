@@ -104,6 +104,8 @@ public class BoardController {
 		//v페이징 번호를 유지
 		rttr.addAttribute("pageNum",cri.getPageNum());
 		rttr.addAttribute("amount",cri.getAmount());
+		rttr.addAttribute("type",cri.getType());
+		rttr.addAttribute("keyword",cri.getKeyword());
 		
 		return "redirect:/board/list";
 	}
@@ -125,6 +127,8 @@ public class BoardController {
 		//페이징 번호를 유지
 		rttr.addAttribute("pageNum",cri.getPageNum());
 		rttr.addAttribute("amount",cri.getAmount());
+		rttr.addAttribute("type",cri.getType());
+		rttr.addAttribute("keyword",cri.getKeyword());
 		
 		return "redirect:/board/list";
 	}
