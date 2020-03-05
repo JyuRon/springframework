@@ -92,7 +92,7 @@ public class BoardController {
 	
 	//@ModelAttribute : controller에서 화면으로 객체는 전달이 되지만 좀더 명시적으로 이름을 지정하기 위함
 	@PostMapping("/modify")
-	public String modify(BoardVO board, @ModelAttribute("cri") Criteria cri, RedirectAttributes rttr) {
+	public String modify(BoardVO board, /*@ModelAttribute("cri") */Criteria cri, RedirectAttributes rttr) {
 		
 		log.info("modify: "+ board);
 		
@@ -101,13 +101,21 @@ public class BoardController {
 			rttr.addFlashAttribute("result","success");
 		}
 		
+		/*
+		 * 
+		 * UriComponentsBuilder로 인한 수정
+		 * 
+		 * 
 		//v페이징 번호를 유지
 		rttr.addAttribute("pageNum",cri.getPageNum());
 		rttr.addAttribute("amount",cri.getAmount());
 		rttr.addAttribute("type",cri.getType());
 		rttr.addAttribute("keyword",cri.getKeyword());
 		
-		return "redirect:/board/list";
+		
+		*/
+		
+		return "redirect:/board/list" + cri.getListLink();
 	}
 	
 	
@@ -116,13 +124,18 @@ public class BoardController {
 
 	//@ModelAttribute : controller에서 화면으로 객체는 전달이 되지만 좀더 명시적으로 이름을 지정하기 위함
 	@PostMapping("/remove")
-	public String remove(@RequestParam("bno") Long bno, @ModelAttribute("cri") Criteria cri, RedirectAttributes rttr) {
+	public String remove(@RequestParam("bno") Long bno, /*@ModelAttribute("cri") */Criteria cri, RedirectAttributes rttr) {
 		
 		log.info("remove..." + bno);
 		if(service.remove(bno)) {
 			rttr.addFlashAttribute("result","success");
 		}
 		
+		/*
+		 * 
+		 * UriComponentsBuilder로 인한 수정
+		 * 
+		 * 
 		
 		//페이징 번호를 유지
 		rttr.addAttribute("pageNum",cri.getPageNum());
@@ -130,7 +143,10 @@ public class BoardController {
 		rttr.addAttribute("type",cri.getType());
 		rttr.addAttribute("keyword",cri.getKeyword());
 		
-		return "redirect:/board/list";
+		
+		*/
+		
+		return "redirect:/board/list" + cri.getListLink();
 	}
 	
 	
