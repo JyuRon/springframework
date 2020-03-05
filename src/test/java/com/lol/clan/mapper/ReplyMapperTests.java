@@ -1,5 +1,6 @@
 package com.lol.clan.mapper;
 
+import java.util.List;
 import java.util.stream.IntStream;
 
 import org.junit.Test;
@@ -9,6 +10,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.lol.clan.config.RootConfig;
+import com.lol.clan.domain.Criteria;
 import com.lol.clan.domain.ReplyVO;
 
 import lombok.Setter;
@@ -24,7 +26,7 @@ public class ReplyMapperTests {
 	
 	private Long[] bnoArr = {3538950L,3538948L,3538947L,3538946L,3538945L};
 	
-	/*
+	
 	@Test
 	public void testMapper() {
 		
@@ -69,8 +71,6 @@ public class ReplyMapperTests {
 		mapper.delete(targetRno);
 	}
 	
-	*/
-	
 	
 	@Test
 	public void testUpdate() {
@@ -86,4 +86,19 @@ public class ReplyMapperTests {
 		log.info("UPDATE COUNT: "+count);
 	}
 
+	
+	
+	
+	
+	@Test
+	public void testList() {
+		
+		Criteria cri = new Criteria();
+		
+		List<ReplyVO> replies = mapper.getListWithPaging(cri, bnoArr[0]);
+		
+		replies.forEach(reply->log.info(reply));
+		
+	}
+	
 }

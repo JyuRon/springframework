@@ -27,4 +27,13 @@
 		update tbl_reply set reply = #{reply}, updatedate = sysdate where rno = #{rno}
 	
 	</update>
+	
+	<select id="getListWithPaging" resultType="com.lol.clan.domain.ReplyVO">
+	
+		select rno, bno, reply, replyer, replyDate, updatedate
+		from tbl_reply
+		where bno = #{bno}
+		order by rno asc
+	
+	</select>
 </mapper>
