@@ -1,6 +1,7 @@
 package com.lol.clan.config;
 
 import javax.servlet.Filter;
+import javax.servlet.MultipartConfigElement;
 import javax.servlet.ServletRegistration;
 
 
@@ -29,11 +30,16 @@ public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitiali
 	
 	
 	
-	//404페이지 호출 설정
+
 	@Override
 	protected void customizeRegistration(ServletRegistration.Dynamic registration) {
-
+		
+		//404페이지 호출 설정
 		registration.setInitParameter("throwExceptionIfNoHandlerFound", "true");
+		
+		//첨부파일 설정
+		MultipartConfigElement multipartConfig = new MultipartConfigElement("C:\\upload\\temp",20971520,41943040,20971520);
+		registration.setMultipartConfig(multipartConfig);
 
 	}
 	
@@ -50,5 +56,8 @@ public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitiali
 		return new Filter[] {characterEncodingFilter};
 
 	}
+	
+	
+	
   
 }
