@@ -10,12 +10,15 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
 @ComponentScan(basePackages= {"com.lol.clan.service"})
+@ComponentScan(basePackages="com.lol.clan.aop")
+@EnableAspectJAutoProxy
 @MapperScan(basePackages= {"com.lol.clan.mapper"})
 public class RootConfig {
 	
