@@ -11,6 +11,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -19,6 +21,7 @@ import com.zaxxer.hikari.HikariDataSource;
 @ComponentScan(basePackages= {"com.lol.clan.service"})
 @ComponentScan(basePackages="com.lol.clan.aop")
 @EnableAspectJAutoProxy
+@EnableTransactionManagement
 @MapperScan(basePackages= {"com.lol.clan.mapper"})
 public class RootConfig {
 	
@@ -55,6 +58,15 @@ public class RootConfig {
 		sqlSessionFactory.setDataSource(dataSource());
 		
 		return (SqlSessionFactory) sqlSessionFactory.getObject();
+	}
+	
+	
+	
+	//트랜잭션 설정 추가
+	@Bean
+	public DataSourceTransactionManager txManager() {
+		
+		return new DataSourceTransactionManager(dataSource());
 	}
 	
 

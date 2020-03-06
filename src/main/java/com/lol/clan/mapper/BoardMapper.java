@@ -2,6 +2,7 @@ package com.lol.clan.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import com.lol.clan.domain.BoardVO;
@@ -31,5 +32,9 @@ public interface BoardMapper {
 	//게시물 개수 검색
 	//cri를 전달할 피요는 없긴 하지만 목록과 전체 데이터 개수는 항상 같이 동작하는 경우가 많기 때문에 추가
 	public int getTotalCount(Criteria cri);
+	
+	
+	//댓글 개수 표시
+	public void updateReplyCnt(@Param("bno") Long bno, @Param("amount") int amount);
 
 }
