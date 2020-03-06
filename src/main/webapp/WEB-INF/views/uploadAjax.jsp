@@ -5,6 +5,39 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
+
+
+<style>
+.uploadResult{
+
+	width: 100%;
+	background-color: gray;
+	
+}
+
+.uploadResult ul{
+
+	display: flex;
+	flex-flow: row;
+	justify-content: center;
+	align-items: center;
+	
+}
+
+
+.uploadResult ul li{
+
+	list-style: none;
+	padding: 10px;
+}
+
+
+.uploadResult ul li img{
+	
+	width: 200px;
+}
+
+</style>
 </head>
 <body>
 <h1>Upload with Ajax</h1>
@@ -14,6 +47,12 @@
 
 <input type='file' name="uploadFile" multiple>
 
+</div>
+
+<div class="uploadResult">
+	<ul>
+	
+	</ul>
 </div>
 
 
@@ -47,7 +86,37 @@
 		 
 		 return true;
 	 }
+	 
+	 //첨부파일 등록 후 초기화
+	 var cloneObj = $(".uploadDiv").clone();
+	 
+	 
+	 //첨부파일 업로드 확인결과
+	 var uploadResult = $(".uploadResult ul");
+	 
+	 function showUploadedFile(uploadResultArr){
+		 
+		 var str="";
+		 
+		 $(uploadResultArr).each(
+				 
+			function(i,obj){
+				
+				if(!obj.image){
+					str += "<li><img src='/resources/img/attach.png'>" + obj.fileName + "</li>";
+				}else{
+					//str += "<li>" + obj.fileName + "</li>";
+					
+					var fileCallPath = encodeURIComponent(obj.uploadPath+"/s_"+obj.uuid+"_"+obj.fileName);
+					
+					str += "<li><img src='/display?fileName="+fileCallPath+"'></li>";
+				}	
+		 });
+		 
+		 uploadResult.append(str);
+	 }
 
+	 
 	 $("#uploadBtn").on("click",function(e){
 		
 		 var formData = new FormData();
@@ -77,10 +146,20 @@
 			 contentType: false,
 			 data: formData,
 			 type: 'POST',
+			 dataType:'json',
 			 success: function(result){
+				 console.log(result);
 				 alert("Uploaded");
+				
+				 //첨부파일 등록 후 확인
+				 showUploadedFile(result);
+				 
+				 //첨부파일 등록 후 초기화
+				 $(".uploadDiv").html(cloneObj.html());
 			 }
 		 });
+		 
+		 
 	 });
  });
  
