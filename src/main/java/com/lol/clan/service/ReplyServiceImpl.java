@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.lol.clan.domain.Criteria;
+import com.lol.clan.domain.ReplyPageDTO;
 import com.lol.clan.domain.ReplyVO;
 import com.lol.clan.mapper.ReplyMapper;
 
@@ -56,6 +57,17 @@ public class ReplyServiceImpl implements ReplyService {
 		
 		log.info("get Reply List of a Board " + bno);
 		return mapper.getListWithPaging(cri, bno);
+	}
+
+	@Override
+	public ReplyPageDTO getListPage(Criteria cri, Long bno) {
+		// TODO Auto-generated method stub
+		
+		
+		return new ReplyPageDTO(
+				mapper.getCountByBno(bno),
+				mapper.getListWithPaging(cri,bno));
+				
 	}
 
 }

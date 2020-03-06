@@ -35,8 +35,8 @@ var replyService = (function(){
 		$.getJSON("/replies/pages/" + bno+"/"+page+".json",
 			function(data){
 				if(callback){
-					callback(data); //댓글 목록만 가져오는 경우
-					//callback(data.replyCnt, data.list);
+					//callback(data); //댓글 목록만 가져오는 경우
+					callback(data.replyCnt, data.list); //댓글 수 포함
 				}
 			
 		}).fail(function(xhr,status,err){

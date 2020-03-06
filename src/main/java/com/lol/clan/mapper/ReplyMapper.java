@@ -23,5 +23,9 @@ public interface ReplyMapper {
 	//(2) Map을 이용하는 방식
 	//(3) @Param을 이용하는 방식
 	public List<ReplyVO> getListWithPaging(@Param("cri") Criteria cri, @Param("bno") Long bno);
+	
+	
+	//댓글 숫자 파악
+	public int getCountByBno(Long bno);
 
 }

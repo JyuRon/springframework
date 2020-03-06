@@ -109,6 +109,11 @@
 				<!-- ./end ul -->
 			</div>
 			<!-- /.panel .chat-panel -->
+			
+			
+			<div class="panel-footer">
+			
+			</div>
 		</div>
 	</div>
 
@@ -176,7 +181,17 @@ $(document).ready(function(){
 				
 			{bno:bnoValue, page: page|| 1}
 			, 
-			function(list){
+			function(replyCnt,list){
+				
+				console.log("replyCnt: "+replyCnt);
+				console.log("list: "+list);
+				console.log(list);
+				
+				if(page == -1){
+					pageNum = Math.ceil(replyCnt/10.0);
+					showList(pageNum);
+					return;
+				}
 			
 				var str="";
 				
@@ -188,12 +203,14 @@ $(document).ready(function(){
 				for(var i = 0, len = list.length || 0; i < len; i++){
 					
 					str +="<li class='left clearfix' data-rno='"+list[i].rno+"'>";
-					str +="<div><div class='header'><strong class='primary-font'>"+list[i].replyer+"</strong>";
+					str +="<div><div class='header'><strong class='primary-font'>["+list[i].rno+"] "+list[i].replyer+"</strong>";
 					str +="<small class='pull-right text-muted'>"+replyService.displayTime(list[i].replyDate)+"</small></div>";
 					str +="<p>"+list[i].reply+"</p></div></li>";
 				}
 				
 				replyUL.html(str);
+				
+				showReplyPage(replyCnt);
 			});
 		
 	}//end showList
@@ -262,7 +279,7 @@ $(document).ready(function(){
 			modal.modal("hide");
 			
 			//글 등록후 갱신을 위한 목적
-			showList(1);
+			showList(-1);
 		});
 	});
 	
@@ -280,7 +297,7 @@ $(document).ready(function(){
 			
 			alert(result);
 			modal.modal("hide");
-			showList(1);
+			showList(pageNum);
 		});
 	});
 	
@@ -294,10 +311,70 @@ $(document).ready(function(){
 			
 			alert(result);
 			modal.modal("hide");
-			showList(1);
+			showList(pageNum);
 		});
 	});
 	
+	
+	
+	
+	//댓글 페이징
+	var pageNum = 1;
+	var replyPageFooter =$(".panel-footer");
+	
+	function showReplyPage(replyCnt){
+		
+		var endNum = Math.ceil(pageNum / 10.0 ) * 10;
+		var startNum = endNum - 9;
+		
+		var prev = startNum !=1;
+		var next = false;
+		
+		if(endNum * 10 >= replyCnt){
+			endNum = Math.ceil(replyCnt/10.0);
+		}
+		
+		if(endNum * 10 < replyCnt){
+			next = true;
+		}
+		
+		var str = "<ul class='pagination pull-right'>";
+		
+		if(prev){
+			str+= "<li class='page-item'><a class='page-link' href='"+(startNum-1)+"'>Previous</a></li>";
+		}
+		
+		for(var i = startNum ; i <= endNum; i++){
+			
+			var active = pageNum == i? "active":"";
+			
+			str+= "<li class='page-item "+active+" '><a class='page-link' href='"+i+"'>"+i+"</a></li>";
+					
+		}
+		
+		if(next){
+			
+			str+="<li class='page-item'><a class='page-link' href='"+(endNum+1)+"'>Next</a></li>";
+		}
+		
+		str += "</ul></div>";
+		
+		replyPageFooter.html(str);
+		
+	}
+	
+	
+	//페이지 번호를 클릭했을 때 새로운 댓글을 가져오게 함
+	replyPageFooter.on("click","li a", function(e){
+		
+		e.preventDefault();
+		
+		var targetPageNum = $(this).attr("href");
+		
+		pageNum = targetPageNum;
+		
+		showList(pageNum);
+	});
 	
 	
 });

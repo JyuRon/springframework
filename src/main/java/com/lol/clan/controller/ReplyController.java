@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lol.clan.domain.Criteria;
+import com.lol.clan.domain.ReplyPageDTO;
 import com.lol.clan.domain.ReplyVO;
 import com.lol.clan.service.ReplyService;
 
@@ -51,15 +52,17 @@ public class ReplyController {
 	
 	//@PathVariable : 경로의 일부를 파라미터로 사용
 	@GetMapping(value = "/pages/{bno}/{page}",produces= {MediaType.APPLICATION_JSON_UTF8_VALUE, MediaType.APPLICATION_XML_VALUE})
-	public ResponseEntity<List<ReplyVO>> getList(@PathVariable("page") int page, @PathVariable("bno") Long bno ){
+	public ResponseEntity<ReplyPageDTO> getList(@PathVariable("page") int page, @PathVariable("bno") Long bno ){
 		
-		log.info("getList.................");
+
 		
 		Criteria cri = new Criteria(page,10);
 		
-		log.info(cri);
+		log.info("get Reply List bno : " + bno);
 		
-		return new ResponseEntity<>(service.getList(cri, bno), HttpStatus.OK);
+		log.info("cri : "+cri);
+		
+		return new ResponseEntity<>(service.getListPage(cri, bno), HttpStatus.OK);
 	}
 	
 	
