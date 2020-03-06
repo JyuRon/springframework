@@ -1,6 +1,9 @@
 package com.lol.clan.controller;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.UUID;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -58,6 +61,14 @@ public class UploadController {
 		
 		String uploadFolder = "C:\\upload";
 		
+		//mkdir
+		File uploadPath = new File(uploadFolder,getFolder());
+		log.info("upload path: "+uploadPath);
+		
+		if(uploadPath.exists() == false) {
+			uploadPath.mkdirs();
+		}
+		
 		for(MultipartFile multipartFile : uploadFile) {
 			
 			log.info("-----------------------------");
@@ -71,7 +82,13 @@ public class UploadController {
 			uploadFileName = uploadFileName.substring(uploadFileName.lastIndexOf("\\")+1);
 			log.info("only file name: " + uploadFileName);
 			
-			File saveFile = new File(uploadFolder, uploadFileName);
+			
+			//중복방지를 위한 UUID 적용
+			UUID uuid = UUID.randomUUID();
+			
+			uploadFileName = uuid.toString()+"_"+uploadFileName;
+			
+			File saveFile = new File(uploadPath, uploadFileName);
 			
 			try {
 				multipartFile.transferTo(saveFile);
@@ -79,7 +96,20 @@ public class UploadController {
 			}catch(Exception e) {
 				log.error(e.getMessage());
 			}
-;			
+
 		}
+	}
+	
+	
+	//중복된 이름의 첨부파일 처리
+	private String getFolder() {
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		
+		Date date = new Date();
+		
+		String str = sdf.format(date);
+		
+		return str.replace("-", File.separator);
 	}
 }
