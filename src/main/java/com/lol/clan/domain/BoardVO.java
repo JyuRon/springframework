@@ -1,6 +1,7 @@
 package com.lol.clan.domain;
 
 import java.util.Date;
+import java.util.List;
 
 import lombok.Data;
 
@@ -15,5 +16,8 @@ public class BoardVO {
 	private Date updateDate;
 	
 	private int replyCnt;
+	
+	//첨부파일 정보 추가
+	private List<AttachFileDTO> attachList;
 
 }
