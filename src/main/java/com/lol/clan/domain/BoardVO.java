@@ -18,6 +18,6 @@ public class BoardVO {
 	private int replyCnt;
 	
 	//첨부파일 정보 추가
-	private List<AttachFileDTO> attachList;
+	private List<BoardAttachVO> attachList;
 
 }

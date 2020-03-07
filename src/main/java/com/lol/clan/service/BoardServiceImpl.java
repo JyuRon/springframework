@@ -4,25 +4,35 @@ import java.util.List;
 
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.lol.clan.domain.BoardVO;
 import com.lol.clan.domain.Criteria;
+import com.lol.clan.mapper.BoardAttachMapper;
 import com.lol.clan.mapper.BoardMapper;
 
 import lombok.AllArgsConstructor;
+import lombok.Setter;
 import lombok.extern.log4j.Log4j;
-
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Log4j
 @Service
-@AllArgsConstructor  //모든 파라미터를 이용하는 생성자 생성
+//@AllArgsConstructor  //모든 파라미터를 이용하는 생성자 생성
 public class BoardServiceImpl implements BoardService {
 	
 	
 	//spring 4.3 이상에서 자동 주입
 	//단일 파라미터를 받는 생성자의 경우
+	//private BoardMapper mapper;
+	
+	@Setter(onMethod_ = @Autowired)
 	private BoardMapper mapper;
 
+	@Setter(onMethod_ = @Autowired)
+	private BoardAttachMapper attachMapper;
+	
+	@Transactional
 	@Override
 	public void register(BoardVO board) {
 		// TODO Auto-generated method stub
@@ -30,6 +40,18 @@ public class BoardServiceImpl implements BoardService {
 		log.info("register...."+board);
 		
 		mapper.insertSelectKey(board);
+		
+		if(board.getAttachList() == null || board.getAttachList().size()<=0) {
+		
+			return;
+		}
+		
+		board.getAttachList().forEach(attach->{
+			
+			attach.setBno(board.getBno());
+			attachMapper.insert(attach);
+		});
+		
 		
 	}
 

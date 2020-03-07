@@ -80,75 +80,61 @@ public class UploadController {
 	@ResponseBody
 	public ResponseEntity<List<AttachFileDTO>> uploadAjaxPost(MultipartFile[] uploadFile) {
 		
-		log.info("update ajax post..........");
-		
 		List<AttachFileDTO> list = new ArrayList<>();
 		String uploadFolder = "C:\\upload";
-		
+
 		String uploadFolderPath = getFolder();
-		
-		//mkdir
-		File uploadPath = new File(uploadFolder,uploadFolderPath);
-		log.info("upload path: "+uploadPath);
-		
-		if(uploadPath.exists() == false) {
+		// make folder --------
+		File uploadPath = new File(uploadFolder, uploadFolderPath);
+
+		if (uploadPath.exists() == false) {
 			uploadPath.mkdirs();
 		}
-		
-		for(MultipartFile multipartFile : uploadFile) {
-			
+		// make yyyy/MM/dd folder
+
+		for (MultipartFile multipartFile : uploadFile) {
+
 			AttachFileDTO attachDTO = new AttachFileDTO();
-			
-			log.info("-----------------------------");
-			log.info("Upload File Name: "+multipartFile.getOriginalFilename());
-			log.info("Upload File Size: "+multipartFile.getSize());
-			
-			
+
 			String uploadFileName = multipartFile.getOriginalFilename();
-			
-			//IE has file path
-			uploadFileName = uploadFileName.substring(uploadFileName.lastIndexOf("\\")+1);
+
+			// IE has file path
+			uploadFileName = uploadFileName.substring(uploadFileName.lastIndexOf("\\") + 1);
 			log.info("only file name: " + uploadFileName);
 			attachDTO.setFileName(uploadFileName);
-			
-			
-			//중복방지를 위한 UUID 적용
+
 			UUID uuid = UUID.randomUUID();
-			
-			uploadFileName = uuid.toString()+"_"+uploadFileName;
-			
-			
-			
+
+			uploadFileName = uuid.toString() + "_" + uploadFileName;
+
 			try {
 				File saveFile = new File(uploadPath, uploadFileName);
 				multipartFile.transferTo(saveFile);
-				
+
 				attachDTO.setUuid(uuid.toString());
 				attachDTO.setUploadPath(uploadFolderPath);
-				
-				
-				//check image type file
-				if(checkImageType(saveFile)) {
-					
+
+				// check image type file
+				if (checkImageType(saveFile)) {
+
 					attachDTO.setImage(true);
-					
-					FileOutputStream thumbnail = new FileOutputStream(new File(uploadPath, "s_"+uploadFileName));
-					
-					Thumbnailator.createThumbnail(multipartFile.getInputStream(),thumbnail,100,100);
-					
+
+					FileOutputStream thumbnail = new FileOutputStream(new File(uploadPath, "s_" + uploadFileName));
+
+					Thumbnailator.createThumbnail(multipartFile.getInputStream(), thumbnail, 100, 100);
+
 					thumbnail.close();
 				}
-				
-				log.info(attachDTO);
+
+				// add to List
 				list.add(attachDTO);
-				
-			}catch(Exception e) {
-				log.error(e.getMessage());
+
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 
-		}
-		
-		return new ResponseEntity<>(list,HttpStatus.OK);
+		} // end for
+		return new ResponseEntity<>(list, HttpStatus.OK);
 	}
 	
 	
