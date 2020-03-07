@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.lol.clan.domain.BoardAttachVO;
 import com.lol.clan.domain.BoardVO;
 import com.lol.clan.domain.Criteria;
 import com.lol.clan.mapper.BoardAttachMapper;
@@ -109,6 +110,16 @@ public class BoardServiceImpl implements BoardService {
 		
 		log.info("get total count");
 		return mapper.getTotalCount(cri);
+	}
+	
+	
+	//게시물의 조회와 첨부파일
+	@Override
+	public List<BoardAttachVO> getAttachList(Long bno){
+		
+		log.info("get Attach list by bno" + bno);
+		
+		return attachMapper.findByBno(bno);
 	}
 
 
