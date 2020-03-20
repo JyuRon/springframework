@@ -1,5 +1,8 @@
 package com.lol.clan.controller;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.Files;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -108,7 +111,7 @@ public class BoardController {
 	
 	//@ModelAttribute : controller에서 화면으로 객체는 전달이 되지만 좀더 명시적으로 이름을 지정하기 위함
 	@PostMapping("/modify")
-	public String modify(BoardVO board, /*@ModelAttribute("cri") */Criteria cri, RedirectAttributes rttr) {
+	public String modify(BoardVO board, @ModelAttribute("cri") Criteria cri, RedirectAttributes rttr) {
 		
 		log.info("modify: "+ board);
 		
@@ -132,6 +135,7 @@ public class BoardController {
 		*/
 		
 		return "redirect:/board/list" + cri.getListLink();
+		//return "redirect:/board/list";
 	}
 	
 	
@@ -143,7 +147,14 @@ public class BoardController {
 	public String remove(@RequestParam("bno") Long bno, /*@ModelAttribute("cri") */Criteria cri, RedirectAttributes rttr) {
 		
 		log.info("remove..." + bno);
+		
+		List<BoardAttachVO> attachList = service.getAttachList(bno);
+		
 		if(service.remove(bno)) {
+			
+			//delete attach files
+			deleteFiles(attachList);
+			
 			rttr.addFlashAttribute("result","success");
 		}
 		
@@ -174,6 +185,38 @@ public class BoardController {
 		log.info("getAttachList "+bno);
 		
 		return new ResponseEntity<>(service.getAttachList(bno), HttpStatus.OK);
+	}
+	
+	
+	//게시물의 삭제와 첨부파일
+	private void deleteFiles(List<BoardAttachVO> attachList) {
+		
+		if(attachList == null || attachList.size() == 0) {
+			return;
+		}
+		
+		log.info("delete attach files.............");
+		log.info(attachList);
+		
+		attachList.forEach(attach->{
+			
+			try {
+				Path file = Paths.get("C:\\upload\\"+attach.getUploadPath()+"\\"
+										+attach.getUuid()+"_"+attach.getFileName());
+				
+				Files.deleteIfExists(file);
+				
+				if(Files.probeContentType(file).startsWith("image")) {
+					
+					Path thumbNail = Paths.get("C:\\upload\\"+attach.getUploadPath()
+											+"\\s_" + attach.getUuid()+"_"+ attach.getFileName());
+			          
+			          Files.delete(thumbNail);
+				}
+			}catch(Exception e) {
+				log.error("delete file error" + e.getMessage());
+			}
+		});
 	}
 	
 
