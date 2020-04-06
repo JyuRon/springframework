@@ -16,6 +16,8 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.security.web.csrf.CsrfFilter;
+import org.springframework.web.filter.CharacterEncodingFilter;
 
 import com.lol.clan.security.CustomAccessDeniedHandler;
 import com.lol.clan.security.CustomLoginSuccessHandler;
@@ -144,12 +146,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		.logoutUrl("/customLogout")
 		.invalidateHttpSession(true)
 		.deleteCookies("remember-me","JSESSION_ID");
-/*
+
+		//자동로그인 설정
 		http.rememberMe()
-	      .key("zerock")
+	      .key("jyuka")
 	      .tokenRepository(persistentTokenRepository())
 	      .tokenValiditySeconds(604800);
-*/
+
+
+		//스프링 시큐리티 적용시 한글깨짐 수정
+		CharacterEncodingFilter filter = new CharacterEncodingFilter();
+		filter.setEncoding("UTF-8");
+		filter.setForceEncoding(true);
+		http.addFilterBefore(filter,CsrfFilter.class);
+	
+
 
 	}
 
@@ -162,7 +173,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
 
 
-	/*
+	//자동로그인 설정
 	@Bean
 	public PersistentTokenRepository persistentTokenRepository() {
 		JdbcTokenRepositoryImpl repo = new JdbcTokenRepositoryImpl();
@@ -170,5 +181,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		return repo;
 	}
 	
-	*/
+	
 }

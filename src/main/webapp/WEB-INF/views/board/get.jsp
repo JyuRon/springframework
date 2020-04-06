@@ -1,9 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
     
-<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
- 
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
 <%@ include file="../includes/header.jsp" %>
 
 
@@ -130,8 +130,14 @@
 						<input class="form-control" name='writer' value='<c:out value="${board.writer }"/>' readonly="readonly">
 					</div>
 					
+					<sec:authentication property="principal" var="pinfo"/>
+					<sec:authorize access="isAuthenticated()">
+				
+						<c:if test="${pinfo.username eq board.writer }">
+							<button data-oper='modify' class="btn btn-default">Modify</button>
+						</c:if>
+					</sec:authorize>
 					
-					<button data-oper='modify' class="btn btn-default">Modify</button>
 					<button data-oper='list' class="btn btn-info">List</button>
 					
 					
@@ -190,7 +196,11 @@
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<i class="fa fa-comments fa-fw"></i>Reply
-				<button id='addReplyBtn' class='btn btn-primary btn-xs pull-right'>New Reply</button>
+									  
+				<sec:authorize access="isAuthenticated()">
+					<button id='addReplyBtn' class='btn btn-primary btn-xs pull-right'>New Reply</button>
+				</sec:authorize>
+				
 			</div>
 			
 			<div class="panel-body">
@@ -244,7 +254,7 @@
 				</div>
 				<div class="form-group">
 					<label>Replyer</label>
-					<input class="form-control" name='replyer' value='replyer'>
+					<input class="form-control" name='replyer' value='replyer' readonly='readonly'>
 				</div>
 				<div class="form-group">
 					<label>Reply Date</label>
@@ -329,11 +339,21 @@ $(document).ready(function(){
 	var modalRemoveBtn = $("#modalRemoveBtn");
 	var modalRegisterBtn = $("#modalRegisterBtn");
 	
+	var replyer = null;
+	
+	<sec:authorize access="isAuthenticated()">
+		replyer = '<sec:authentication property="principal.username"/>';
+	</sec:authorize>
+	
+	var csrfHeaderName = "${_csrf.headerName}";
+	var csrfTokenValue = "${_csrf.token}";
+	
 	
 	//모달창에 상황에 따라 표현할 버튼 - 등록시
 	$("#addReplyBtn").on("click", function(e){
 		
 		modal.find("input").val("");
+		modal.find("input[name='replyer']").val(replyer);
 		modalInputReplyDate.closest("div").hide();
 		modal.find("button[id !='modalCloseBtn']").hide();
 		
@@ -365,6 +385,12 @@ $(document).ready(function(){
 	});
 	
 	
+	//Ajax spring security header...
+	$(document).ajaxSend(function(e, xhr, options){
+		
+		xhr.setRequestHeader(csrfHeaderName, csrfTokenValue);
+	});
+	
 	//등록버튼(기능) 구현
 	modalRegisterBtn.on("click",function(e){
 		
@@ -390,11 +416,29 @@ $(document).ready(function(){
 	//수정버튼 기능 구현
 	modalModBtn.on("click",function(e){
 		
+		var originalReplyer = modalInputReplyer.val();
+		
 		var reply ={
 				
 				rno:modal.data("rno"),
-				reply:modalInputReply.val()
+				reply:modalInputReply.val(),
+				replyer:originalReplyer
 		};
+		
+		if(!replyer){
+			alert("로그인후 수정이 가능합니다.");
+			modal.modal("hide");
+			return;
+		}
+		
+		console.log("Original Replyer: " + originalReplyer);
+		
+		if(replyer != originalReplyer){
+			
+			alert("자신이 작성한 댓글만 수정이 가능합니다.");
+			modal.modal("hide");
+			return;
+		}
 		
 		replyService.update(reply,function(result){
 			
@@ -410,7 +454,27 @@ $(document).ready(function(){
 		
 		var rno = modal.data("rno");
 		
-		replyService.remove(rno, function(result){
+		console.log("RNO: " + rno);
+		console.log("REPLYER: " + replyer);
+		
+		if(!replyer){
+			alert("로그인후 삭제가 가능합니다.");
+			modal.modal("hide");
+			return;
+		}
+		
+		var originalReplyer = modalInputReplyer.val();
+		
+		console.log("Original Replyer: " + originalReplyer);
+		
+		if(replyer != originalReplyer){
+			
+			alert("자신이 작성한 댓글만 삭제가 가능합니다.");
+			modal.modal("hide");
+			return;
+		}
+		
+		replyService.remove(rno, originalReplyer, function(result){
 			
 			alert(result);
 			modal.modal("hide");

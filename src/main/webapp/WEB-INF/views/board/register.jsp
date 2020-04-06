@@ -3,7 +3,7 @@
     
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-    
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
 <%@ include file="../includes/header.jsp" %>
 
 <style>
@@ -130,6 +130,10 @@ $(document).ready(function(e){
 	}
 	
 	
+	//스프링 시큐리티 적용으로 인한 오류 해결
+	var csrfHeaderName = "${_csrf.headerName}";
+	var csrfTokenValue = "${_csrf.token}";
+	
 	//첨부파일 변경 감지
 	$("input[type='file']").change(function(e){
 		
@@ -152,6 +156,9 @@ $(document).ready(function(e){
 			url: '/uploadAjaxAction',
 			processData : false,
 			contentType : false,
+			beforeSend: function(xhr){
+				xhr.setRequestHeader(csrfHeaderName, csrfTokenValue);
+			},
 			data : formData,
 			type : 'POST',
 			dataType : 'json',
@@ -225,6 +232,9 @@ $(document).ready(function(e){
 			
 			url: '/deleteFile',
 			data: {fileName: targetFile, type:type},
+			beforeSend: function(xhr){
+				xhr.setRequestHeader(csrfHeaderName, csrfTokenValue);
+			},
 			dataType:'text',
 			type:'POST',
 			success: function(result){
@@ -260,6 +270,8 @@ $(document).ready(function(e){
 			<div class="panel-body">
 				<form role="form" action="/board/register" method="post">
 					
+					<input type="hidden" name="${_csrf.parameterName }" value="${_csrf.token }"/>
+					
 					<div class="form-group">
 						<label>Title</label>
 						<input class="form-control" name='title'>
@@ -275,7 +287,7 @@ $(document).ready(function(e){
 					
 					<div class="form-group">
 						<label>Writer</label>
-						<input class="form-control" name='writer'>
+						<input class="form-control" name='writer' value='<sec:authentication property="principal.username"/>' readonly="readonly">
 					</div>
 					
 					
